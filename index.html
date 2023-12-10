@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="main.css">
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="large.css" media="screen and (min-width:768px)">
+    <link rel="shortcut icon" href="assets/2.png" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Whisper&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700&family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+        rel="stylesheet">
+    <!-- Primary Meta Tags -->
+    <title>Think about this | A place for your thoughts</title>
+    <meta name="title" content="Think about this | A place for your thoughts" />
+    <meta name="description"
+        content="With think about this , organize your thoughts and ideas into one single place and view from your mobile even offline like a native app. Cheers!" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://thinkit.netlify.app/" />
+    <meta property="og:title" content="Think about this | A place for your thoughts" />
+    <meta property="og:description"
+        content="With think about this , organize your thoughts and ideas into one single place and view from your mobile even offline like a native app. Cheers!" />
+    <meta property="og:image" content="https://thinkit.netlify.app/assets/1.png" />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://thinkit.netlify.app/" />
+    <meta property="twitter:title" content="Think about this | A place for your thoughts" />
+    <meta property="twitter:description"
+        content="With think about this , organize your thoughts and ideas into one single place and view from your mobile even offline like a native app. Cheers!" />
+    <meta property="twitter:image" content="https://thinkit.netlify.app/assets/1.png" />
+
+    <!-- Meta Tags Generated with https://metatags.io -->
+</head>
+
+<body>
+    <nav>
+        Think about it
+    </nav>
+    <section class="allItemsWrapper">
+    </section>
+
+    <form id="form">
+        <input type="text" placeholder="Start typing here" class="input-group" id="input" />
+        <button type="submit" id="submitBtn"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round" class="lucide lucide-send-horizontal">
+                <path d="m3 3 3 9-3 9 19-9Z" />
+                <path d="M6 12h16" />
+            </svg>
+        </button>
+    </form>
+
+    <div class="downloadPrompt">
+        <div class="promptContent">
+            <img src="assets/1.png" alt="">
+            <span>Try adding Think About It to your homescreen!</span>
+        </div>
+        <div class="promptButtons">
+            <button id="buttonInstall">Add</button>
+            <button id="buttonHide">Close</button>
+        </div>
+    </div>
+    <canvas class="confetti" id="canvas"></canvas>
+    <script src="main.js"></script>
+    <script>
+        if (window.location.pathname !== "/index.html")
+            window.location.href = "/index.html"
+        let allItemsWrapper = document.querySelector(".allItemsWrapper")
+
+        let list = localStorage.getItem("listofitems")
+        window.addEventListener("load", () => {
+            renderList(localStorage.getItem("listofitems"))
+            input.focus()
+        })
+
+        function deleteItem(index) {
+            let list = localStorage.getItem("listofitems")
+            if (list) {
+                let temp = JSON.parse(list)?.filter((item, idx) => index !== idx)
+                console.log(temp, list)
+                localStorage.setItem("listofitems", JSON.stringify(temp))
+                renderList(JSON.stringify(temp))
+            }
+        }
+
+        function renderList(list) {
+            if (!list || JSON.parse(list).length == 0) {
+                allItemsWrapper.innerHTML = ''
+                const message = document.createElement("span")
+                message.setAttribute("class", "dateTime")
+                message.innerText = "Nothing available yet"
+                allItemsWrapper.appendChild(message)
+                return
+            }
+            let temp = JSON.parse(list)
+            allItemsWrapper.innerHTML = ''
+            temp.forEach((item, idx) => {
+                const block = document.createElement("div")
+                block.setAttribute("class", "itemWrapper")
+
+                const circle = document.createElement("div")
+                circle.setAttribute("class", "circle")
+
+                const content = document.createElement("div")
+                content.setAttribute("class", "content")
+
+                const itemTitle = document.createElement("span")
+                itemTitle.setAttribute("class", "itemTitle")
+                itemTitle.innerText = item?.title
+
+                const itemFooter = document.createElement("div")
+                itemFooter.setAttribute("class", "itemFooter")
+
+                const dateTime = document.createElement("span")
+                dateTime.setAttribute("class", "dateTime")
+                dateTime.innerText = item?.time.replace("T", "  ").split(".")[0]
+
+                const deleteBtn = document.createElement("button")
+                deleteBtn.setAttribute("class", "deleteBtn")
+                deleteBtn.setAttribute("onclick", `deleteItem(${idx})`)
+                deleteBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-trash"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>`
+
+                itemFooter.appendChild(dateTime)
+                itemFooter.appendChild(deleteBtn)
+
+                content.appendChild(itemTitle)
+                content.appendChild(itemFooter)
+
+                block.append(circle)
+                block.append(content)
+                allItemsWrapper.appendChild(block)
+                block.scrollIntoView()
+
+            });
+        }
+
+        canvas = document.getElementById("canvas");
+        ctx = canvas.getContext("2d");
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        cx = ctx.canvas.width / 2;
+        cy = ctx.canvas.height / 2;
+
+        let confetti = [];
+        const confettiCount = 80;
+        const gravity = 0.9;
+        const terminalVelocity = 10;
+        const drag = 0.175;
+        const colors = [
+            { front: 'red', back: 'darkred' },
+            { front: 'green', back: 'darkgreen' },
+            { front: 'blue', back: 'darkblue' },
+            { front: 'yellow', back: 'darkyellow' },
+            { front: 'orange', back: 'darkorange' },
+            { front: 'pink', back: 'darkpink' },
+            { front: 'purple', back: 'darkpurple' },
+            { front: 'turquoise', back: 'darkturquoise' }];
+
+
+        //-----------Functions--------------
+        resizeCanvas = () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            cx = ctx.canvas.width / 2;
+            cy = ctx.canvas.height / 2;
+        };
+
+        randomRange = (min, max) => Math.random() * (max - min) + min;
+
+        initConfetti = () => {
+            for (let i = 0; i < confettiCount; i++) {
+                confetti.push({
+                    color: colors[Math.floor(randomRange(0, colors.length))],
+                    dimensions: {
+                        x: randomRange(10, 20),
+                        y: randomRange(10, 30)
+                    },
+
+                    position: {
+                        x: randomRange(0, canvas.width),
+                        y: canvas.height - 1
+                    },
+
+                    rotation: randomRange(0, 2 * Math.PI),
+                    scale: {
+                        x: 1,
+                        y: 1
+                    },
+
+                    velocity: {
+                        x: randomRange(-25, 25),
+                        y: randomRange(0, -50)
+                    }
+                });
+
+
+            }
+        };
+
+        //---------Render-----------
+        render = () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            confetti.forEach((confetto, index) => {
+                let width = confetto.dimensions.x * confetto.scale.x;
+                let height = confetto.dimensions.y * confetto.scale.y;
+
+                // Move canvas to position and rotate
+                ctx.translate(confetto.position.x, confetto.position.y);
+                ctx.rotate(confetto.rotation);
+
+                // Apply forces to velocity
+                confetto.velocity.x -= confetto.velocity.x * drag;
+                confetto.velocity.y = Math.min(confetto.velocity.y + gravity, terminalVelocity);
+                confetto.velocity.x += Math.random() > 0.5 ? Math.random() : -Math.random();
+
+                // Set position
+                confetto.position.x += confetto.velocity.x;
+                confetto.position.y += confetto.velocity.y;
+
+                // Delete confetti when out of frame
+                if (confetto.position.y >= canvas.height) confetti.splice(index, 1);
+
+                // Loop confetto x position
+                if (confetto.position.x > canvas.width) confetto.position.x = 0;
+                if (confetto.position.x < 0) confetto.position.x = canvas.width;
+
+                // Spin confetto by scaling y
+                confetto.scale.y = Math.cos(confetto.position.y * 0.1);
+                ctx.fillStyle = confetto.scale.y > 0 ? confetto.color.front : confetto.color.back;
+
+                // Draw confetti
+                ctx.fillRect(-width / 2, -height / 2, width, height);
+
+                // Reset transform matrix
+                ctx.setTransform(1, 0, 0, 1, 0, 0);
+            });
+
+            // Fire off another round of confetti
+            // if (confetti.length <= 10) initConfetti();
+
+            window.requestAnimationFrame(render);
+        };
+
+        //---------Execution--------
+        // initConfetti();
+        render();
+
+        //----------Resize----------
+        window.addEventListener('resize', function () {
+            resizeCanvas();
+        });
+
+
+
+
+        let input = document.getElementById("input");
+        let form = document.getElementById("form");
+        let submitBtn = document.getElementById("submitBtn");
+        form.addEventListener("submit", (e) => {
+            e.preventDefault();
+            if (input.value == "") {
+                submitBtn.style.background = "red"
+                form.style.outline = "1px solid red"
+            }
+            else {
+                submitBtn.style.background = "#0256b0"
+                form.style.outline = "none"
+
+                let listofItems = localStorage.getItem("listofitems")
+                if (listofItems) {
+                    let updatedList = [...JSON.parse(listofItems), { title: input.value, time: new Date() }]
+                    localStorage.setItem("listofitems", JSON.stringify(updatedList))
+                    renderList(JSON.stringify(updatedList))
+                }
+                else {
+                    localStorage.setItem("listofitems", JSON.stringify([{ title: input.value, time: new Date() }]))
+                    renderList(JSON.stringify([{ title: input.value, time: new Date() }]))
+                }
+                initConfetti()
+                input.value = ""
+            }
+        })
+
+        input.addEventListener("keyup", () => {
+            submitBtn.style.background = "#0256b0"
+            form.style.outline = "none"
+        })
+    </script>
+
+</body>
+
+</html>

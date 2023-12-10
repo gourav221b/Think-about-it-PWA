@@ -1,0 +1,30 @@
+@media screen and (min-width:760px) {
+    
+.allItemsWrapper{
+    flex-direction: row;
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
+    .itemWrapper {
+        width: 45%;
+        padding: 2%;
+    }
+
+    
+}
+@media screen and (min-width:1000px) {
+    form{
+        padding: 2%;
+    }
+    .allItemsWrapper{
+        padding: 5%;
+    }
+    .itemWrapper
+    {
+        width: 31%;
+        padding: 2%;
+    }
+    nav{
+        padding-bottom: 2%;
+    }
+}
